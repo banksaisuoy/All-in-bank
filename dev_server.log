@@ -1,0 +1,14 @@
+
+> all-in-bank@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 2s
+ ○ Compiling / ...
+ ✓ Compiled / in 9.3s (2410 modules)
+ GET / 200 in 9784ms
+ ✓ Compiled in 722ms (1183 modules)
+ GET / 200 in 53ms

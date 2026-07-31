@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { mockTransactions } from '../lib/mockData';
 
 export const useSpendingData = (filter) => {
-  const { data, metrics, transactions } = useMemo(() => {
+  const { data, metrics } = useMemo(() => {
     let filteredTransactions = [...mockTransactions];
     const now = new Date('2023-10-30'); // Mock "current" date relative to mock data
 
@@ -66,10 +66,9 @@ export const useSpendingData = (filter) => {
 
     return {
       data: { trendData, categoryData },
-      metrics: calculatedMetrics,
-      transactions: filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date))
+      metrics: calculatedMetrics
     };
   }, [filter]);
 
-  return { data, metrics, transactions };
+  return { data, metrics };
 };

@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 export const Dashboard = () => {
   const [filter, setFilter] = useState('30days'); // '7days', '30days', 'all'
-  const { data, metrics, transactions } = useSpendingData(filter);
+  const { data, metrics } = useSpendingData(filter);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 p-6 sm:p-8 font-sans">
@@ -100,48 +100,6 @@ export const Dashboard = () => {
                  )}
                </div>
              </div>
-          </div>
-        </div>
-
-        {/* Recent Transactions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Recent Transactions</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {transactions && transactions.map((t) => (
-                  <tr key={t.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {t.description}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 capitalize">
-                      {t.category}
-                    </td>
-                    <td className={cn("px-4 py-3 whitespace-nowrap text-sm font-semibold text-right", t.amount > 0 ? "text-emerald-600" : "text-gray-900")}>
-                      {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                    </td>
-                  </tr>
-                ))}
-                {(!transactions || transactions.length === 0) && (
-                  <tr>
-                    <td colSpan="4" className="px-4 py-8 text-center text-sm text-gray-500">
-                      No transactions found for this period.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
           </div>
         </div>
 

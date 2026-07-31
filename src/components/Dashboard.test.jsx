@@ -64,8 +64,8 @@ describe('Dashboard Component', () => {
 
   it('renders category breakdown correctly', () => {
      render(<Dashboard />);
-     expect(screen.getAllByText('food').length).toBeGreaterThan(0);
-     expect(screen.getAllByText('transport').length).toBeGreaterThan(0);
+     expect(screen.getByText('food')).toBeInTheDocument();
+     expect(screen.getByText('transport')).toBeInTheDocument();
   });
 });
 

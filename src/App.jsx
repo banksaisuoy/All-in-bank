@@ -1,30 +1,24 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Dashboard } from './components/Dashboard';
-import { RecentTransactions } from './components/RecentTransactions';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Dashboard } from './pages/Dashboard';
 import './index.css';
 
-function Home() {
+// Placeholder for the transaction details page
+const TransactionDetails = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to All-in-bank</h1>
-      <p className="text-gray-600 mb-8 max-w-md text-center">Manage your finances effortlessly with our new interactive spending dashboard.</p>
-      <Link to="/dashboard" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm mb-8">
-        Go to Dashboard
-      </Link>
-      <div className="w-full max-w-4xl">
-        <RecentTransactions />
-      </div>
+    <div className="p-8 text-center">
+      <h2 className="text-2xl font-bold mb-4">Transaction Details</h2>
+      <p className="text-gray-600">Details for this transaction will appear here.</p>
     </div>
   );
-}
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/transactions/:id" element={<TransactionDetails />} />
       </Routes>
     </BrowserRouter>
   );

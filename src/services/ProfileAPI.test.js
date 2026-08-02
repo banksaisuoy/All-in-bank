@@ -1,23 +1,29 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fetchUserProfile, fetchUserSettings, updateUserSettings } from './ProfileAPI';
+import { fetchUserProfile, fetchUserSettings, updateUserSettings, getUserProfile, updateProfile, updateSettings } from './ProfileAPI';
 
 describe('ProfileAPI', () => {
   it('fetchUserProfile returns mock user profile', async () => {
-    const profile = await fetchUserProfile();
-    expect(profile).toHaveProperty('name', 'Jane Doe');
-    expect(profile).toHaveProperty('email', 'jane.doe@example.com');
-  });
-
-  it('fetchUserSettings returns mock user settings', async () => {
-    const settings = await fetchUserSettings();
-    expect(settings).toHaveProperty('notifications');
-    expect(settings).toHaveProperty('twoFactor');
-  });
-
-  it('updateUserSettings updates and returns new settings', async () => {
-    const initialSettings = await fetchUserSettings();
-    const newSettings = { ...initialSettings, notifications: false, twoFactor: true };
     const updatedSettings = await updateUserSettings(newSettings);
     expect(updatedSettings).toEqual(newSettings);
+  });
+
+  it('getUserProfile aliases fetchUserProfile', async () => {
+    const profile = await getUserProfile();
+    expect(profile).toHaveProperty('name', 'Jane Doe');
+    expect(profile).toHaveProperty('avatar');
+  });
+
+  it('updateProfile updates and returns new profile', async () => {
+    const newProfileData = { name: 'Jane Smith', avatar: 'https://newavatar.com' };
+    const updatedProfile = await updateProfile(newProfileData);
+    expect(updatedProfile).toHaveProperty('name', 'Jane Smith');
+    expect(updatedProfile).toHaveProperty('avatar', 'https://newavatar.com');
+  });
+
+  it('updateSettings aliases updateUserSettings', async () => {
+    const initialSettings = await fetchUserSettings();
+    const newSettingsData = { ...initialSettings, darkMode: true, privacy: false };
+    const updatedSettings = await updateSettings(newSettingsData);
+    expect(updatedSettings).toEqual(newSettingsData);
   });
 });

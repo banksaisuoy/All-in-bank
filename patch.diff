@@ -1,464 +1,974 @@
+diff --git a/README.md b/README.md
+index ee91993..e649511 100644
+--- a/README.md
+@@ -2,6 +2,7 @@
+ This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+ 
+ ## Features Added
++- **Authentication**: Added a new authentication flow using Context API (`AuthProvider`) and protected routes.
+ - **Recent Transactions**: Added a responsive table to display recent financial activity with color-coded debit/credit amounts.
+ 
+ Currently, two official plugins are available:
 diff --git a/patch.diff b/patch.diff
-index 274dc82..e69de29 100644
+index 451ae56..e69de29 100644
 --- a/patch.diff
-@@ -1,459 +0,0 @@
+@@ -1,464 +0,0 @@
 -diff --git a/patch.diff b/patch.diff
--index 12d7340..e69de29 100644
+-index 274dc82..e69de29 100644
 ---- a/patch.diff
--@@ -1,454 +0,0 @@
---diff --git a/.github/workflows/build-test.yml b/.github/workflows/build-test.yml
---new file mode 100644
---index 0000000..7f13ec0
------ /dev/null
---@@ -0,0 +1,50 @@
---+name: Build Test
---+
---+on:
---+  pull_request:
---+    branches: [main, master]
---+
---+jobs:
---+  build-test:
---+    runs-on: ubuntu-latest
---+    timeout-minutes: 10
---+    steps:
---+      - uses: actions/checkout@v4
---+      - uses: actions/setup-node@v4
---+        with: { node-version: "20" }
---+      - name: Check if package.json exists
---+        id: check
---+        run: |
---+          if [ -f "package.json" ]; then
---+            echo "has_node=true" >> $GITHUB_OUTPUT
---+          else
---+            echo "has_node=false" >> $GITHUB_OUTPUT
---+            echo "No package.json — skip build test"
---+          fi
---+      - name: Install and build
---+        if: steps.check.outputs.has_node == 'true'
---+        run: |
---+          npm install --legacy-peer-deps 2>&1 || true
---+          if npm run | grep -q "build"; then
---+            npm run build 2>&1 && echo "BUILD PASSED" || echo "BUILD FAILED — but will not block (alpha)"
---+          else
---+            echo "No build script — skip"
---+          fi
---+      - name: Basic syntax check
---+        run: |
---+          # Check for obvious syntax errors in JS/TS files
---+          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" | head -20 | while read f; do
---+            node --check "$f" 2>/dev/null || echo "Syntax warning in $f"
---+          done
---+          echo "Syntax check done"
---+
---+  # QA verification — does the PR description make sense?
---+  qa-check:
---+    runs-on: ubuntu-latest
---+    steps:
---+      - name: Verify PR
---+        run: |
---+          echo "PR Title: ${{ github.event.pull_request.title }}"
---+          echo "PR Body: ${{ github.event.pull_request.body }}"
---+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
---+          echo "✓ QA check passed"
+-@@ -1,459 +0,0 @@
+--diff --git a/patch.diff b/patch.diff
+--index 12d7340..e69de29 100644
+----- a/patch.diff
+--@@ -1,454 +0,0 @@
+---diff --git a/.github/workflows/build-test.yml b/.github/workflows/build-test.yml
+---new file mode 100644
+---index 0000000..7f13ec0
+------ /dev/null
+---@@ -0,0 +1,50 @@
+---+name: Build Test
+---+
+---+on:
+---+  pull_request:
+---+    branches: [main, master]
+---+
+---+jobs:
+---+  build-test:
+---+    runs-on: ubuntu-latest
+---+    timeout-minutes: 10
+---+    steps:
+---+      - uses: actions/checkout@v4
+---+      - uses: actions/setup-node@v4
+---+        with: { node-version: "20" }
+---+      - name: Check if package.json exists
+---+        id: check
+---+        run: |
+---+          if [ -f "package.json" ]; then
+---+            echo "has_node=true" >> $GITHUB_OUTPUT
+---+          else
+---+            echo "has_node=false" >> $GITHUB_OUTPUT
+---+            echo "No package.json — skip build test"
+---+          fi
+---+      - name: Install and build
+---+        if: steps.check.outputs.has_node == 'true'
+---+        run: |
+---+          npm install --legacy-peer-deps 2>&1 || true
+---+          if npm run | grep -q "build"; then
+---+            npm run build 2>&1 && echo "BUILD PASSED" || echo "BUILD FAILED — but will not block (alpha)"
+---+          else
+---+            echo "No build script — skip"
+---+          fi
+---+      - name: Basic syntax check
+---+        run: |
+---+          # Check for obvious syntax errors in JS/TS files
+---+          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" | head -20 | while read f; do
+---+            node --check "$f" 2>/dev/null || echo "Syntax warning in $f"
+---+          done
+---+          echo "Syntax check done"
+---+
+---+  # QA verification — does the PR description make sense?
+---+  qa-check:
+---+    runs-on: ubuntu-latest
+---+    steps:
+---+      - name: Verify PR
+---+        run: |
+---+          echo "PR Title: ${{ github.event.pull_request.title }}"
+---+          echo "PR Body: ${{ github.event.pull_request.body }}"
+---+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+---+          echo "✓ QA check passed"
+---\ No newline at end of file
+---diff --git a/PROGRESS.md b/PROGRESS.md
+---new file mode 100644
+---index 0000000..bc50edc
+------ /dev/null
+---@@ -0,0 +1,34 @@
+---+# 📋 Project Progress
+---+
+---+## 🎯 Project Overview
+---+- **Repo**: All-in-bank
+---+- **Type**: banking
+---+- **Last Updated**: 2026-07-10T04:33:08.973949+00:00
+---+
+---+## ✅ Completed Features
+---+(ยังไม่มี — AI จะเพิ่มเมื่อทำเสร็จ)
+---+
+---+## 🔄 In Progress
+---+- [feature] Improve All-in-bank — next development phase (session: 987001059831..., started: 2026-07-10 04:35 UTC)
+---+
+---+## 📋 Next Steps (AI จะเลือกทำจากนี่)
+---+1. Review codebase และเพิ่มฟีเจอร์แรก
+---+2. แก้ bugs ที่พบ
+---+3. เพิ่ม tests
+---+4. ปรับปรุง UI/UX
+---+5. เพิ่ม security measures
+---+
+---+## 🐛 Known Bugs
+---+(ยังไม่ได้ตรวจสอบ)
+---+
+---+## 🔒 Security Issues
+---+(ยังไม่ได้ตรวจสอบ)
+---+
+---+## 📊 Metrics
+---+- Total sessions: 0
+---+- Total PRs merged: 0
+---+- Last session: (ยังไม่มี)
+---+
+---+## Last Updated
+---+2026-07-10 04:35 UTC
+---+
+---diff --git a/README.md b/README.md
+---index d937833..be26592 100644
+------ a/README.md
+---@@ -2,6 +2,9 @@
+--- 
+--- This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+--- 
+---+## Features Added
+---+- **Recent Transactions**: Added a responsive table to display recent financial activity with color-coded debit/credit amounts.
+---+
+--- Currently, two official plugins are available:
+--- 
+--- - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+---diff --git a/src/App.jsx b/src/App.jsx
+---index 343a47a..c925ba3 100644
+------ a/src/App.jsx
+---@@ -1,6 +1,7 @@
+--- import React from 'react';
+--- import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+--- import { Dashboard } from './components/Dashboard';
+---+import { RecentTransactions } from './components/RecentTransactions';
+--- import './index.css';
+--- 
+--- function Home() {
+---@@ -8,9 +9,12 @@ function Home() {
+---     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
+---       <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to All-in-bank</h1>
+---       <p className="text-gray-600 mb-8 max-w-md text-center">Manage your finances effortlessly with our new interactive spending dashboard.</p>
+----      <Link to="/dashboard" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm">
+---+      <Link to="/dashboard" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm mb-8">
+---         Go to Dashboard
+---       </Link>
+---+      <div className="w-full max-w-4xl">
+---+        <RecentTransactions />
+---+      </div>
+---     </div>
+---   );
+--- }
+---diff --git a/src/components/RecentTransactions.css b/src/components/RecentTransactions.css
+---new file mode 100644
+---index 0000000..e322d87
+------ /dev/null
+---@@ -0,0 +1,75 @@
+---+.recent-transactions-container {
+---+  background-color: #ffffff;
+---+  border-radius: 0.75rem;
+---+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+---+  border: 1px solid #e5e7eb;
+---+  padding: 1.5rem;
+---+  margin-top: 1.5rem;
+---+}
+---+
+---+.table-responsive {
+---+  overflow-x: auto;
+---+}
+---+
+---+.transactions-table {
+---+  width: 100%;
+---+  border-collapse: collapse;
+---+  text-align: left;
+---+}
+---+
+---+.transactions-table th {
+---+  padding: 0.75rem 1rem;
+---+  background-color: #f9fafb;
+---+  font-weight: 600;
+---+  color: #4b5563;
+---+  font-size: 0.875rem;
+---+  border-bottom: 2px solid #e5e7eb;
+---+}
+---+
+---+.transactions-table td {
+---+  padding: 0.75rem 1rem;
+---+  font-size: 0.875rem;
+---+  color: #111827;
+---+  border-bottom: 1px solid #e5e7eb;
+---+}
+---+
+---+.transactions-table tbody tr:nth-child(even) {
+---+  background-color: #f9fafb;
+---+}
+---+
+---+.transactions-table tbody tr:hover {
+---+  background-color: #f3f4f6;
+---+}
+---+
+---+.amount-cell {
+---+  font-weight: 500;
+---+}
+---+
+---+.amount-cell.credit {
+---+  color: #059669; /* green */
+---+}
+---+
+---+.amount-cell.debit {
+---+  color: #dc2626; /* red */
+---+}
+---+
+---+.recent-transactions-loading {
+---+  display: flex;
+---+  justify-content: center;
+---+  align-items: center;
+---+  height: 200px;
+---+}
+---+
+---+.spinner {
+---+  border: 4px solid #f3f3f3;
+---+  border-top: 4px solid #4f46e5; /* indigo-600 */
+---+  border-radius: 50%;
+---+  width: 40px;
+---+  height: 40px;
+---+  animation: spin 1s linear infinite;
+---+}
+---+
+---+@keyframes spin {
+---+  0% { transform: rotate(0deg); }
+---+  100% { transform: rotate(360deg); }
+---+}
+---diff --git a/src/components/RecentTransactions.jsx b/src/components/RecentTransactions.jsx
+---new file mode 100644
+---index 0000000..2e234b8
+------ /dev/null
+---@@ -0,0 +1,75 @@
+---+import React, { useState, useEffect } from 'react';
+---+import { getRecentTransactions } from '../services/transactionService';
+---+import './RecentTransactions.css';
+---+import { cn } from '../lib/utils';
+---+
+---+export const RecentTransactions = () => {
+---+  const [transactions, setTransactions] = useState([]);
+---+  const [loading, setLoading] = useState(true);
+---+
+---+  useEffect(() => {
+---+    let isMounted = true;
+---+    const fetchTransactions = async () => {
+---+      try {
+---+        const data = await getRecentTransactions();
+---+        if (isMounted) {
+---+          setTransactions(data);
+---+          setLoading(false);
+---+        }
+---+      } catch (error) {
+---+        console.error('Error fetching transactions:', error);
+---+        if (isMounted) {
+---+          setLoading(false);
+---+        }
+---+      }
+---+    };
+---+
+---+    fetchTransactions();
+---+    return () => {
+---+      isMounted = false;
+---+    };
+---+  }, []);
+---+
+---+  if (loading) {
+---+    return (
+---+      <div className="recent-transactions-loading">
+---+        <div className="spinner"></div>
+---+      </div>
+---+    );
+---+  }
+---+
+---+  return (
+---+    <div className="recent-transactions-container">
+---+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Activity</h2>
+---+      <div className="table-responsive">
+---+        <table className="transactions-table">
+---+          <thead>
+---+            <tr>
+---+              <th>Date</th>
+---+              <th>Description</th>
+---+              <th>Amount</th>
+---+              <th>Balance</th>
+---+            </tr>
+---+          </thead>
+---+          <tbody>
+---+            {transactions.map((tx) => (
+---+              <tr key={tx.id}>
+---+                <td>{new Date(tx.date).toLocaleDateString()}</td>
+---+                <td>{tx.description}</td>
+---+                <td
+---+                  className={cn(
+---+                    'amount-cell',
+---+                    tx.type === 'credit' ? 'credit' : 'debit'
+---+                  )}
+---+                >
+---+                  {tx.type === 'credit' ? '+' : '-'}${tx.amount.toFixed(2)}
+---+                </td>
+---+                <td>${tx.balanceAfter.toFixed(2)}</td>
+---+              </tr>
+---+            ))}
+---+          </tbody>
+---+        </table>
+---+      </div>
+---+    </div>
+---+  );
+---+};
+---diff --git a/src/components/RecentTransactions.test.jsx b/src/components/RecentTransactions.test.jsx
+---new file mode 100644
+---index 0000000..9a1ac61
+------ /dev/null
+---@@ -0,0 +1,63 @@
+---+import React from 'react';
+---+import { render, screen, waitFor } from '@testing-library/react';
+---+import { describe, it, expect, vi } from 'vitest';
+---+import { RecentTransactions } from './RecentTransactions';
+---+import * as transactionService from '../services/transactionService';
+---+
+---+// Mock the transaction service
+---+vi.mock('../services/transactionService', () => ({
+---+  getRecentTransactions: vi.fn(),
+---+}));
+---+
+---+describe('RecentTransactions', () => {
+---+  it('renders loading state initially and then displays transactions', async () => {
+---+    // Setup mock data
+---+    const mockData = [
+---+      {
+---+        id: 1,
+---+        date: '2024-05-01T10:00:00Z',
+---+        description: 'Grocery Store',
+---+        amount: 150.25,
+---+        type: 'debit',
+---+        balanceAfter: 2850.75,
+---+      },
+---+      {
+---+        id: 2,
+---+        date: '2024-05-02T14:30:00Z',
+---+        description: 'Salary Deposit',
+---+        amount: 3000.00,
+---+        type: 'credit',
+---+        balanceAfter: 5850.75,
+---+      },
+---+    ];
+---+
+---+    transactionService.getRecentTransactions.mockResolvedValue(mockData);
+---+
+---+    const { container } = render(<RecentTransactions />);
+---+    
+---+    // Check loading state
+---+    expect(container.querySelector('.spinner')).toBeInTheDocument();
+---+
+---+    // Wait for the data to load and component to update
+---+    await waitFor(() => {
+---+      expect(screen.getByText('Recent Activity')).toBeInTheDocument();
+---+    });
+---+
+---+    // Check table headers
+---+    expect(screen.getByText('Date')).toBeInTheDocument();
+---+    expect(screen.getByText('Description')).toBeInTheDocument();
+---+    expect(screen.getByText('Amount')).toBeInTheDocument();
+---+    expect(screen.getByText('Balance')).toBeInTheDocument();
+---+
+---+    // Check data rendering
+---+    expect(screen.getByText('Grocery Store')).toBeInTheDocument();
+---+    expect(screen.getByText('-$150.25')).toBeInTheDocument();
+---+    
+---+    expect(screen.getByText('Salary Deposit')).toBeInTheDocument();
+---+    expect(screen.getByText('+$3000.00')).toBeInTheDocument();
+---+
+---+    // Verify row count (2 data rows + 1 header row)
+---+    const rows = screen.getAllByRole('row');
+---+    expect(rows).toHaveLength(3);
+---+  });
+---+});
+---diff --git a/src/services/transactionService.js b/src/services/transactionService.js
+---new file mode 100644
+---index 0000000..14bfc45
+------ /dev/null
+---@@ -0,0 +1,88 @@
+---+export const getRecentTransactions = () => {
+---+  return new Promise((resolve) => {
+---+    setTimeout(() => {
+---+      resolve([
+---+        {
+---+          id: 1,
+---+          date: new Date('2024-05-01T10:00:00Z').toISOString(),
+---+          description: 'Grocery Store',
+---+          amount: 150.25,
+---+          type: 'debit',
+---+          balanceAfter: 2850.75,
+---+        },
+---+        {
+---+          id: 2,
+---+          date: new Date('2024-05-02T14:30:00Z').toISOString(),
+---+          description: 'Salary Deposit',
+---+          amount: 3000.00,
+---+          type: 'credit',
+---+          balanceAfter: 5850.75,
+---+        },
+---+        {
+---+          id: 3,
+---+          date: new Date('2024-05-03T09:15:00Z').toISOString(),
+---+          description: 'Electric Bill',
+---+          amount: 85.50,
+---+          type: 'debit',
+---+          balanceAfter: 5765.25,
+---+        },
+---+        {
+---+          id: 4,
+---+          date: new Date('2024-05-04T18:45:00Z').toISOString(),
+---+          description: 'Restaurant',
+---+          amount: 45.00,
+---+          type: 'debit',
+---+          balanceAfter: 5720.25,
+---+        },
+---+        {
+---+          id: 5,
+---+          date: new Date('2024-05-05T11:20:00Z').toISOString(),
+---+          description: 'Online Shopping',
+---+          amount: 120.99,
+---+          type: 'debit',
+---+          balanceAfter: 5599.26,
+---+        },
+---+        {
+---+          id: 6,
+---+          date: new Date('2024-05-06T08:00:00Z').toISOString(),
+---+          description: 'Gym Membership',
+---+          amount: 50.00,
+---+          type: 'debit',
+---+          balanceAfter: 5549.26,
+---+        },
+---+        {
+---+          id: 7,
+---+          date: new Date('2024-05-07T16:10:00Z').toISOString(),
+---+          description: 'Coffee Shop',
+---+          amount: 4.50,
+---+          type: 'debit',
+---+          balanceAfter: 5544.76,
+---+        },
+---+        {
+---+          id: 8,
+---+          date: new Date('2024-05-08T13:40:00Z').toISOString(),
+---+          description: 'Refund',
+---+          amount: 25.00,
+---+          type: 'credit',
+---+          balanceAfter: 5569.76,
+---+        },
+---+        {
+---+          id: 9,
+---+          date: new Date('2024-05-09T19:00:00Z').toISOString(),
+---+          description: 'Movie Tickets',
+---+          amount: 30.00,
+---+          type: 'debit',
+---+          balanceAfter: 5539.76,
+---+        },
+---+        {
+---+          id: 10,
+---+          date: new Date('2024-05-10T12:00:00Z').toISOString(),
+---+          description: 'Gas Station',
+---+          amount: 40.00,
+---+          type: 'debit',
+---+          balanceAfter: 5499.76,
+---+        },
+---+      ]);
+---+    }, 500); // simulate network delay
+---+  });
+---+};
 --\ No newline at end of file
---diff --git a/PROGRESS.md b/PROGRESS.md
---new file mode 100644
---index 0000000..bc50edc
------ /dev/null
---@@ -0,0 +1,34 @@
---+# 📋 Project Progress
---+
---+## 🎯 Project Overview
---+- **Repo**: All-in-bank
---+- **Type**: banking
---+- **Last Updated**: 2026-07-10T04:33:08.973949+00:00
---+
---+## ✅ Completed Features
---+(ยังไม่มี — AI จะเพิ่มเมื่อทำเสร็จ)
---+
---+## 🔄 In Progress
---+- [feature] Improve All-in-bank — next development phase (session: 987001059831..., started: 2026-07-10 04:35 UTC)
---+
---+## 📋 Next Steps (AI จะเลือกทำจากนี่)
---+1. Review codebase และเพิ่มฟีเจอร์แรก
---+2. แก้ bugs ที่พบ
---+3. เพิ่ม tests
---+4. ปรับปรุง UI/UX
---+5. เพิ่ม security measures
---+
---+## 🐛 Known Bugs
---+(ยังไม่ได้ตรวจสอบ)
---+
---+## 🔒 Security Issues
---+(ยังไม่ได้ตรวจสอบ)
---+
---+## 📊 Metrics
---+- Total sessions: 0
---+- Total PRs merged: 0
---+- Last session: (ยังไม่มี)
---+
---+## Last Updated
---+2026-07-10 04:35 UTC
---+
---diff --git a/README.md b/README.md
---index d937833..be26592 100644
------ a/README.md
---@@ -2,6 +2,9 @@
--- 
--- This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
--- 
---+## Features Added
---+- **Recent Transactions**: Added a responsive table to display recent financial activity with color-coded debit/credit amounts.
---+
--- Currently, two official plugins are available:
--- 
--- - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
---diff --git a/src/App.jsx b/src/App.jsx
---index 343a47a..c925ba3 100644
------ a/src/App.jsx
---@@ -1,6 +1,7 @@
--- import React from 'react';
--- import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
--- import { Dashboard } from './components/Dashboard';
---+import { RecentTransactions } from './components/RecentTransactions';
--- import './index.css';
--- 
--- function Home() {
---@@ -8,9 +9,12 @@ function Home() {
---     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
---       <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to All-in-bank</h1>
---       <p className="text-gray-600 mb-8 max-w-md text-center">Manage your finances effortlessly with our new interactive spending dashboard.</p>
----      <Link to="/dashboard" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm">
---+      <Link to="/dashboard" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm mb-8">
---         Go to Dashboard
---       </Link>
---+      <div className="w-full max-w-4xl">
---+        <RecentTransactions />
---+      </div>
---     </div>
---   );
--- }
---diff --git a/src/components/RecentTransactions.css b/src/components/RecentTransactions.css
---new file mode 100644
---index 0000000..e322d87
------ /dev/null
---@@ -0,0 +1,75 @@
---+.recent-transactions-container {
---+  background-color: #ffffff;
---+  border-radius: 0.75rem;
---+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
---+  border: 1px solid #e5e7eb;
---+  padding: 1.5rem;
---+  margin-top: 1.5rem;
---+}
---+
---+.table-responsive {
---+  overflow-x: auto;
---+}
---+
---+.transactions-table {
---+  width: 100%;
---+  border-collapse: collapse;
---+  text-align: left;
---+}
---+
---+.transactions-table th {
---+  padding: 0.75rem 1rem;
---+  background-color: #f9fafb;
---+  font-weight: 600;
---+  color: #4b5563;
---+  font-size: 0.875rem;
---+  border-bottom: 2px solid #e5e7eb;
---+}
---+
---+.transactions-table td {
---+  padding: 0.75rem 1rem;
---+  font-size: 0.875rem;
---+  color: #111827;
---+  border-bottom: 1px solid #e5e7eb;
---+}
---+
---+.transactions-table tbody tr:nth-child(even) {
---+  background-color: #f9fafb;
---+}
---+
---+.transactions-table tbody tr:hover {
---+  background-color: #f3f4f6;
---+}
---+
---+.amount-cell {
---+  font-weight: 500;
---+}
---+
---+.amount-cell.credit {
---+  color: #059669; /* green */
---+}
---+
---+.amount-cell.debit {
---+  color: #dc2626; /* red */
---+}
---+
---+.recent-transactions-loading {
---+  display: flex;
---+  justify-content: center;
---+  align-items: center;
---+  height: 200px;
---+}
---+
---+.spinner {
---+  border: 4px solid #f3f3f3;
---+  border-top: 4px solid #4f46e5; /* indigo-600 */
---+  border-radius: 50%;
---+  width: 40px;
---+  height: 40px;
---+  animation: spin 1s linear infinite;
---+}
---+
---+@keyframes spin {
---+  0% { transform: rotate(0deg); }
---+  100% { transform: rotate(360deg); }
---+}
---diff --git a/src/components/RecentTransactions.jsx b/src/components/RecentTransactions.jsx
---new file mode 100644
---index 0000000..2e234b8
------ /dev/null
---@@ -0,0 +1,75 @@
---+import React, { useState, useEffect } from 'react';
---+import { getRecentTransactions } from '../services/transactionService';
---+import './RecentTransactions.css';
---+import { cn } from '../lib/utils';
---+
---+export const RecentTransactions = () => {
---+  const [transactions, setTransactions] = useState([]);
---+  const [loading, setLoading] = useState(true);
---+
---+  useEffect(() => {
---+    let isMounted = true;
---+    const fetchTransactions = async () => {
---+      try {
---+        const data = await getRecentTransactions();
---+        if (isMounted) {
---+          setTransactions(data);
---+          setLoading(false);
---+        }
---+      } catch (error) {
---+        console.error('Error fetching transactions:', error);
---+        if (isMounted) {
---+          setLoading(false);
---+        }
---+      }
---+    };
---+
---+    fetchTransactions();
---+    return () => {
---+      isMounted = false;
---+    };
---+  }, []);
---+
---+  if (loading) {
---+    return (
---+      <div className="recent-transactions-loading">
---+        <div className="spinner"></div>
---+      </div>
---+    );
---+  }
---+
---+  return (
---+    <div className="recent-transactions-container">
---+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Activity</h2>
---+      <div className="table-responsive">
---+        <table className="transactions-table">
---+          <thead>
---+            <tr>
---+              <th>Date</th>
---+              <th>Description</th>
---+              <th>Amount</th>
---+              <th>Balance</th>
---+            </tr>
---+          </thead>
---+          <tbody>
---+            {transactions.map((tx) => (
---+              <tr key={tx.id}>
---+                <td>{new Date(tx.date).toLocaleDateString()}</td>
---+                <td>{tx.description}</td>
---+                <td
---+                  className={cn(
---+                    'amount-cell',
---+                    tx.type === 'credit' ? 'credit' : 'debit'
---+                  )}
---+                >
---+                  {tx.type === 'credit' ? '+' : '-'}${tx.amount.toFixed(2)}
---+                </td>
---+                <td>${tx.balanceAfter.toFixed(2)}</td>
---+              </tr>
---+            ))}
---+          </tbody>
---+        </table>
---+      </div>
---+    </div>
---+  );
---+};
---diff --git a/src/components/RecentTransactions.test.jsx b/src/components/RecentTransactions.test.jsx
---new file mode 100644
---index 0000000..9a1ac61
------ /dev/null
---@@ -0,0 +1,63 @@
---+import React from 'react';
---+import { render, screen, waitFor } from '@testing-library/react';
---+import { describe, it, expect, vi } from 'vitest';
---+import { RecentTransactions } from './RecentTransactions';
---+import * as transactionService from '../services/transactionService';
---+
---+// Mock the transaction service
---+vi.mock('../services/transactionService', () => ({
---+  getRecentTransactions: vi.fn(),
---+}));
---+
---+describe('RecentTransactions', () => {
---+  it('renders loading state initially and then displays transactions', async () => {
---+    // Setup mock data
---+    const mockData = [
---+      {
---+        id: 1,
---+        date: '2024-05-01T10:00:00Z',
---+        description: 'Grocery Store',
---+        amount: 150.25,
---+        type: 'debit',
---+        balanceAfter: 2850.75,
---+      },
---+      {
---+        id: 2,
---+        date: '2024-05-02T14:30:00Z',
---+        description: 'Salary Deposit',
---+        amount: 3000.00,
---+        type: 'credit',
---+        balanceAfter: 5850.75,
---+      },
---+    ];
---+
---+    transactionService.getRecentTransactions.mockResolvedValue(mockData);
---+
---+    const { container } = render(<RecentTransactions />);
---+    
---+    // Check loading state
---+    expect(container.querySelector('.spinner')).toBeInTheDocument();
---+
---+    // Wait for the data to load and component to update
---+    await waitFor(() => {
---+      expect(screen.getByText('Recent Activity')).toBeInTheDocument();
---+    });
---+
---+    // Check table headers
---+    expect(screen.getByText('Date')).toBeInTheDocument();
---+    expect(screen.getByText('Description')).toBeInTheDocument();
---+    expect(screen.getByText('Amount')).toBeInTheDocument();
---+    expect(screen.getByText('Balance')).toBeInTheDocument();
---+
---+    // Check data rendering
---+    expect(screen.getByText('Grocery Store')).toBeInTheDocument();
---+    expect(screen.getByText('-$150.25')).toBeInTheDocument();
---+    
---+    expect(screen.getByText('Salary Deposit')).toBeInTheDocument();
---+    expect(screen.getByText('+$3000.00')).toBeInTheDocument();
---+
---+    // Verify row count (2 data rows + 1 header row)
---+    const rows = screen.getAllByRole('row');
---+    expect(rows).toHaveLength(3);
---+  });
---+});
---diff --git a/src/services/transactionService.js b/src/services/transactionService.js
---new file mode 100644
---index 0000000..14bfc45
------ /dev/null
---@@ -0,0 +1,88 @@
---+export const getRecentTransactions = () => {
---+  return new Promise((resolve) => {
---+    setTimeout(() => {
---+      resolve([
---+        {
---+          id: 1,
---+          date: new Date('2024-05-01T10:00:00Z').toISOString(),
---+          description: 'Grocery Store',
---+          amount: 150.25,
---+          type: 'debit',
---+          balanceAfter: 2850.75,
---+        },
---+        {
---+          id: 2,
---+          date: new Date('2024-05-02T14:30:00Z').toISOString(),
---+          description: 'Salary Deposit',
---+          amount: 3000.00,
---+          type: 'credit',
---+          balanceAfter: 5850.75,
---+        },
---+        {
---+          id: 3,
---+          date: new Date('2024-05-03T09:15:00Z').toISOString(),
---+          description: 'Electric Bill',
---+          amount: 85.50,
---+          type: 'debit',
---+          balanceAfter: 5765.25,
---+        },
---+        {
---+          id: 4,
---+          date: new Date('2024-05-04T18:45:00Z').toISOString(),
---+          description: 'Restaurant',
---+          amount: 45.00,
---+          type: 'debit',
---+          balanceAfter: 5720.25,
---+        },
---+        {
---+          id: 5,
---+          date: new Date('2024-05-05T11:20:00Z').toISOString(),
---+          description: 'Online Shopping',
---+          amount: 120.99,
---+          type: 'debit',
---+          balanceAfter: 5599.26,
---+        },
---+        {
---+          id: 6,
---+          date: new Date('2024-05-06T08:00:00Z').toISOString(),
---+          description: 'Gym Membership',
---+          amount: 50.00,
---+          type: 'debit',
---+          balanceAfter: 5549.26,
---+        },
---+        {
---+          id: 7,
---+          date: new Date('2024-05-07T16:10:00Z').toISOString(),
---+          description: 'Coffee Shop',
---+          amount: 4.50,
---+          type: 'debit',
---+          balanceAfter: 5544.76,
---+        },
---+        {
---+          id: 8,
---+          date: new Date('2024-05-08T13:40:00Z').toISOString(),
---+          description: 'Refund',
---+          amount: 25.00,
---+          type: 'credit',
---+          balanceAfter: 5569.76,
---+        },
---+        {
---+          id: 9,
---+          date: new Date('2024-05-09T19:00:00Z').toISOString(),
---+          description: 'Movie Tickets',
---+          amount: 30.00,
---+          type: 'debit',
---+          balanceAfter: 5539.76,
---+        },
---+        {
---+          id: 10,
---+          date: new Date('2024-05-10T12:00:00Z').toISOString(),
---+          description: 'Gas Station',
---+          amount: 40.00,
---+          type: 'debit',
---+          balanceAfter: 5499.76,
---+        },
---+      ]);
---+    }, 500); // simulate network delay
---+  });
---+};
 -\ No newline at end of file
 \ No newline at end of file
+diff --git a/src/App.jsx b/src/App.jsx
+index 3675176..57aaf9e 100644
+--- a/src/App.jsx
+@@ -1,9 +1,14 @@
+ import React from 'react';
+ import { AppRouter } from './router';
++import { AuthProvider } from './auth/AuthProvider';
+ import './index.css';
+ 
+ const App = () => {
+-  return <AppRouter />;
++  return (
++    <AuthProvider>
++      <AppRouter />
++    </AuthProvider>
++  );
+ };
+ 
+ export default App;
+\ No newline at end of file
+diff --git a/src/auth/AuthProvider.jsx b/src/auth/AuthProvider.jsx
+new file mode 100644
+index 0000000..bdc755e
+--- /dev/null
+@@ -0,0 +1,75 @@
++import React, { createContext, useState, useEffect, useCallback } from 'react';
++
++export const AuthContext = createContext();
++
++export const AuthProvider = ({ children }) => {
++  const [user, setUser] = useState(null);
++  const [loading, setLoading] = useState(true);
++
++  // Initialize from localStorage
++  useEffect(() => {
++    const token = localStorage.getItem('token');
++    const storedUser = localStorage.getItem('user');
++    if (token && storedUser) {
++      try {
++        setUser(JSON.parse(storedUser));
++      } catch (e) {
++        // Invalid stored user
++        localStorage.removeItem('token');
++        localStorage.removeItem('user');
++      }
++    }
++    setLoading(false);
++  }, []);
++
++  const login = useCallback(async (email, password) => {
++    // Mock login logic
++    if (email && password) {
++      const mockToken = 'mock-jwt-token-' + Date.now();
++      const mockUser = { id: 1, email, name: email.split('@')[0] };
++      
++      localStorage.setItem('token', mockToken);
++      localStorage.setItem('user', JSON.stringify(mockUser));
++      
++      setUser(mockUser);
++      return true;
++    }
++    throw new Error('Invalid credentials');
++  }, []);
++
++  const logout = useCallback(() => {
++    localStorage.removeItem('token');
++    localStorage.removeItem('user');
++    setUser(null);
++  }, []);
++
++  const refreshToken = useCallback(async () => {
++    // Mock token refresh
++    return new Promise((resolve, reject) => {
++      setTimeout(() => {
++        if (localStorage.getItem('token')) {
++          const newToken = 'mock-jwt-token-refreshed-' + Date.now();
++          localStorage.setItem('token', newToken);
++          resolve(newToken);
++        } else {
++          logout();
++          reject(new Error('No token to refresh'));
++        }
++      }, 500);
++    });
++  }, [logout]);
++
++  const value = {
++    user,
++    login,
++    logout,
++    refreshToken,
++    loading
++  };
++
++  return (
++    <AuthContext.Provider value={value}>
++      {!loading && children}
++    </AuthContext.Provider>
++  );
++};
+diff --git a/src/auth/Login.jsx b/src/auth/Login.jsx
+new file mode 100644
+index 0000000..0a2fedf
+--- /dev/null
+@@ -0,0 +1,88 @@
++import React, { useState } from 'react';
++import { useNavigate } from 'react-router-dom';
++import { useAuth } from './useAuth';
++
++export const Login = () => {
++  const [email, setEmail] = useState('');
++  const [password, setPassword] = useState('');
++  const [error, setError] = useState('');
++  const { login } = useAuth();
++  const navigate = useNavigate();
++
++  const handleSubmit = async (e) => {
++    e.preventDefault();
++    setError('');
++
++    if (!email || !password) {
++      setError('Please fill in all fields');
++      return;
++    }
++
++    try {
++      await login(email, password);
++      navigate('/', { replace: true });
++    } catch (err) {
++      setError('Invalid credentials');
++    }
++  };
++
++  return (
++    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
++      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow">
++        <div>
++          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
++            Sign in to your account
++          </h2>
++        </div>
++        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
++          {error && (
++            <div className="text-red-500 text-sm text-center">{error}</div>
++          )}
++          <div className="rounded-md shadow-sm -space-y-px">
++            <div>
++              <label htmlFor="email-address" className="sr-only">
++                Email address
++              </label>
++              <input
++                id="email-address"
++                name="email"
++                type="email"
++                autoComplete="email"
++                required
++                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
++                placeholder="Email address"
++                value={email}
++                onChange={(e) => setEmail(e.target.value)}
++              />
++            </div>
++            <div>
++              <label htmlFor="password" className="sr-only">
++                Password
++              </label>
++              <input
++                id="password"
++                name="password"
++                type="password"
++                autoComplete="current-password"
++                required
++                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
++                placeholder="Password"
++                value={password}
++                onChange={(e) => setPassword(e.target.value)}
++              />
++            </div>
++          </div>
++
++          <div>
++            <button
++              type="submit"
++              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
++            >
++              Sign in
++            </button>
++          </div>
++        </form>
++      </div>
++    </div>
++  );
++};
+diff --git a/src/auth/PrivateRoute.jsx b/src/auth/PrivateRoute.jsx
+new file mode 100644
+index 0000000..8ff02ab
+--- /dev/null
+@@ -0,0 +1,13 @@
++import React from 'react';
++import { Navigate } from 'react-router-dom';
++import { useAuth } from './useAuth';
++
++export const PrivateRoute = ({ children }) => {
++  const { user } = useAuth();
++
++  if (!user) {
++    return <Navigate to="/login" replace />;
++  }
++
++  return children;
++};
+diff --git a/src/auth/__tests__/AuthProvider.test.jsx b/src/auth/__tests__/AuthProvider.test.jsx
+new file mode 100644
+index 0000000..24a5085
+--- /dev/null
+@@ -0,0 +1,65 @@
++import { describe, it, expect, beforeEach } from 'vitest';
++import { render, act, waitFor } from '@testing-library/react';
++import React, { useContext } from 'react';
++import { AuthProvider, AuthContext } from '../AuthProvider';
++
++const TestComponent = () => {
++  const { user, login, logout, refreshToken } = useContext(AuthContext);
++
++  return (
++    <div>
++      <div data-testid="user">{user ? user.email : 'null'}</div>
++      <button data-testid="login" onClick={() => login('test@example.com', 'password')}>Login</button>
++      <button data-testid="logout" onClick={() => logout()}>Logout</button>
++      <button data-testid="refresh" onClick={() => refreshToken()}>Refresh</button>
++    </div>
++  );
++};
++
++describe('AuthProvider', () => {
++  beforeEach(() => {
++    localStorage.clear();
++  });
++
++  it('provides null user initially', async () => {
++    const { getByTestId } = render(
++      <AuthProvider>
++        <TestComponent />
++      </AuthProvider>
++    );
++
++    await waitFor(() => {
++      expect(getByTestId('user').textContent).toBe('null');
++    });
++  });
++
++  it('handles login and logout correctly', async () => {
++    const { getByTestId } = render(
++      <AuthProvider>
++        <TestComponent />
++      </AuthProvider>
++    );
++
++    // Click login
++    await act(async () => {
++      getByTestId('login').click();
++    });
++
++    await waitFor(() => {
++      expect(getByTestId('user').textContent).toBe('test@example.com');
++      expect(localStorage.getItem('token')).toBeTruthy();
++      expect(localStorage.getItem('user')).toBeTruthy();
++    });
++
++    // Click logout
++    await act(async () => {
++      getByTestId('logout').click();
++    });
++
++    await waitFor(() => {
++      expect(getByTestId('user').textContent).toBe('null');
++      expect(localStorage.getItem('token')).toBeNull();
++      expect(localStorage.getItem('user')).toBeNull();
++    });
++  });
++});
+diff --git a/src/auth/__tests__/PrivateRoute.test.jsx b/src/auth/__tests__/PrivateRoute.test.jsx
+new file mode 100644
+index 0000000..e065e9b
+--- /dev/null
+@@ -0,0 +1,38 @@
++import { describe, it, expect, vi } from 'vitest';
++import { render } from '@testing-library/react';
++import React from 'react';
++import { PrivateRoute } from '../PrivateRoute';
++import * as useAuthHook from '../useAuth';
++
++// Mock react-router-dom Navigate
++vi.mock('react-router-dom', () => ({
++  Navigate: ({ to }) => <div data-testid="navigate">{to}</div>
++}));
++
++describe('PrivateRoute', () => {
++  it('redirects to /login if user is not authenticated', () => {
++    vi.spyOn(useAuthHook, 'useAuth').mockReturnValue({ user: null });
++
++    const { getByTestId, queryByText } = render(
++      <PrivateRoute>
++        <div>Private Content</div>
++      </PrivateRoute>
++    );
++
++    expect(getByTestId('navigate').textContent).toBe('/login');
++    expect(queryByText('Private Content')).toBeNull();
++  });
++
++  it('renders children if user is authenticated', () => {
++    vi.spyOn(useAuthHook, 'useAuth').mockReturnValue({ user: { email: 'test@example.com' } });
++
++    const { queryByTestId, getByText } = render(
++      <PrivateRoute>
++        <div>Private Content</div>
++      </PrivateRoute>
++    );
++
++    expect(queryByTestId('navigate')).toBeNull();
++    expect(getByText('Private Content')).toBeInTheDocument();
++  });
++});
+diff --git a/src/auth/api.js b/src/auth/api.js
+new file mode 100644
+index 0000000..b88bd3a
+--- /dev/null
+@@ -0,0 +1,31 @@
++// In a real application, refreshToken would be an external dependency or imported
++// Here we simulate importing the context's logic or using an event/interceptor
++// Because React context is tied to components, we need a way to refresh the token
++// if we're using a plain JS file. Alternatively, we can use the stored token.
++
++export const fetchWithAuth = async (url, options = {}) => {
++  let token = localStorage.getItem('token');
++  
++  const headers = {
++    ...options.headers,
++    'Authorization': token ? `Bearer ${token}` : '',
++  };
++
++  let response = await fetch(url, { ...options, headers });
++
++  if (response.status === 401) {
++    // Attempt token refresh
++    // For mock purposes, we simulate the refresh here if token exists
++    if (token) {
++      const newToken = 'mock-jwt-token-refreshed-' + Date.now();
++      localStorage.setItem('token', newToken);
++      token = newToken;
++      
++      // Retry request with new token
++      headers['Authorization'] = `Bearer ${token}`;
++      response = await fetch(url, { ...options, headers });
++    }
++  }
++
++  return response;
++};
+diff --git a/src/auth/useAuth.js b/src/auth/useAuth.js
+new file mode 100644
+index 0000000..eda4263
+--- /dev/null
+@@ -0,0 +1,10 @@
++import { useContext } from 'react';
++import { AuthContext } from './AuthProvider';
++
++export const useAuth = () => {
++  const context = useContext(AuthContext);
++  if (!context) {
++    throw new Error('useAuth must be used within an AuthProvider');
++  }
++  return context;
++};
+diff --git a/src/router.jsx b/src/router.jsx
+index 990a52d..9862c74 100644
+--- a/src/router.jsx
+@@ -4,6 +4,8 @@ import { Dashboard } from './pages/Dashboard';
+ import { Profile } from './components/Profile';
+ import { Settings } from './components/Settings';
+ import { Navbar } from './components/Navbar';
++import { Login } from './auth/Login';
++import { PrivateRoute } from './auth/PrivateRoute';
+ 
+ // Layout wrapper for routes that need the navbar
+ const MainLayout = ({ children }) => (
+@@ -21,25 +23,30 @@ export const AppRouter = () => {
+   return (
+     <BrowserRouter>
+       <Routes>
+-        <Route path="/" element={<Dashboard />} />
++        <Route path="/login" element={<Login />} />
++        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+         <Route 
+           path="/profile" 
+           element={
+-            <MainLayout>
+-              <Profile />
+-            </MainLayout>
++            <PrivateRoute>
++              <MainLayout>
++                <Profile />
++              </MainLayout>
++            </PrivateRoute>
+           } 
+         />
+         <Route 
+           path="/settings" 
+           element={
+-            <MainLayout>
+-              <Settings />
+-            </MainLayout>
++            <PrivateRoute>
++              <MainLayout>
++                <Settings />
++              </MainLayout>
++            </PrivateRoute>
+           } 
+         />
+         {/* Placeholder for the transaction details page to avoid breaking tests/existing routing */}
+-        <Route path="/transactions/:id" element={<Dashboard />} />
++        <Route path="/transactions/:id" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+       </Routes>
+     </BrowserRouter>
+   );
+diff --git a/src/services/ProfileAPI.js b/src/services/ProfileAPI.js
+index d162edd..2a179a7 100644
+--- a/src/services/ProfileAPI.js
+@@ -1,33 +1,39 @@
+-  email: 'jane.doe@example.com',
+-  phone: '+1 (555) 123-4567',
+-  address: '123 Main St, Anytown USA',
+-  role: 'Premium Member',
+-  avatar: 'https://i.pravatar.cc/150?u=jane.doe@example.com'
+-};
++import { fetchWithAuth } from '../auth/api';
+ 
+-const mockUserSettings = {
+-  notifications: true,
+-  twoFactor: false,
+-  darkMode: false,
+-  privacy: true
+-};
+-
+-// Simulate network delay
+-  await delay(800);
+-  Object.assign(mockUserSettings, newSettings);
+-  return { ...mockUserSettings };
+-};
++const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+ 
+ export const getUserProfile = async () => {
+-  return await fetchUserProfile();
++  const response = await fetchWithAuth(`${API_BASE_URL}/profile`);
++  if (!response.ok) {
++    throw new Error('Failed to fetch profile');
++  }
++  return response.json();
+ };
+ 
+ export const updateProfile = async (updates) => {
+-  await delay(800);
+-  Object.assign(mockUserProfile, updates);
+-  return { ...mockUserProfile };
++  const response = await fetchWithAuth(`${API_BASE_URL}/profile`, {
++    method: 'PUT',
++    headers: {
++      'Content-Type': 'application/json',
++    },
++    body: JSON.stringify(updates),
++  });
++  if (!response.ok) {
++    throw new Error('Failed to update profile');
++  }
++  return response.json();
+ };
+ 
+ export const updateSettings = async (updates) => {
+-  return await updateUserSettings(updates);
+-};
+\ No newline at end of file
++  const response = await fetchWithAuth(`${API_BASE_URL}/profile/settings`, {
++    method: 'PUT',
++    headers: {
++      'Content-Type': 'application/json',
++    },
++    body: JSON.stringify(updates),
++  });
++  if (!response.ok) {
++    throw new Error('Failed to update settings');
++  }
++  return response.json();
++};

@@ -1,33 +1,39 @@
-  email: 'jane.doe@example.com',
-  phone: '+1 (555) 123-4567',
-  address: '123 Main St, Anytown USA',
-  role: 'Premium Member',
-  avatar: 'https://i.pravatar.cc/150?u=jane.doe@example.com'
-};
+import { fetchWithAuth } from '../auth/api';
 
-const mockUserSettings = {
-  notifications: true,
-  twoFactor: false,
-  darkMode: false,
-  privacy: true
-};
-
-// Simulate network delay
-  await delay(800);
-  Object.assign(mockUserSettings, newSettings);
-  return { ...mockUserSettings };
-};
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export const getUserProfile = async () => {
-  return await fetchUserProfile();
+  const response = await fetchWithAuth(`${API_BASE_URL}/profile`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch profile');
+  }
+  return response.json();
 };
 
 export const updateProfile = async (updates) => {
-  await delay(800);
-  Object.assign(mockUserProfile, updates);
-  return { ...mockUserProfile };
+  const response = await fetchWithAuth(`${API_BASE_URL}/profile`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updates),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update profile');
+  }
+  return response.json();
 };
 
 export const updateSettings = async (updates) => {
-  return await updateUserSettings(updates);
+  const response = await fetchWithAuth(`${API_BASE_URL}/profile/settings`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updates),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update settings');
+  }
+  return response.json();
 };

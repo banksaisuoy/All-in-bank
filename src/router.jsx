@@ -1,46 +1,38 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Dashboard } from './pages/Dashboard';
 import { Profile } from './components/Profile';
 import { Settings } from './components/Settings';
 import { Navbar } from './components/Navbar';
+import { Login } from './auth/Login';
+import { PrivateRoute } from './auth/PrivateRoute';
 
 // Layout wrapper for routes that need the navbar
 const MainLayout = ({ children }) => (
-  <div className="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar />
-    <main className="flex-1 py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {children}
-      </div>
-    </main>
-  </div>
-);
-
-export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route 
           path="/profile" 
           element={
-            <MainLayout>
-              <Profile />
-            </MainLayout>
+            <PrivateRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </PrivateRoute>
           } 
         />
         <Route 
           path="/settings" 
           element={
-            <MainLayout>
-              <Settings />
-            </MainLayout>
+            <PrivateRoute>
+              <MainLayout>
+                <Settings />
+              </MainLayout>
+            </PrivateRoute>
           } 
         />
         {/* Placeholder for the transaction details page to avoid breaking tests/existing routing */}
-        <Route path="/transactions/:id" element={<Dashboard />} />
+        <Route path="/transactions/:id" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );
-};

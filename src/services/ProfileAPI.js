@@ -1,11 +1,10 @@
-import { fetchWithAuth } from '../auth/api';
+  return response.json();
+};
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-
-export const getUserProfile = async () => {
-  const response = await fetchWithAuth(`${API_BASE_URL}/profile`);
+export const fetchUserSettings = async () => {
+  const response = await fetchWithAuth(`${API_BASE_URL}/profile/settings`);
   if (!response.ok) {
-    throw new Error('Failed to fetch profile');
+    throw new Error('Failed to fetch settings');
   }
   return response.json();
 };
@@ -13,27 +12,3 @@ export const getUserProfile = async () => {
 export const updateProfile = async (updates) => {
   const response = await fetchWithAuth(`${API_BASE_URL}/profile`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(updates),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update profile');
-  }
-  return response.json();
-};
-
-export const updateSettings = async (updates) => {
-  const response = await fetchWithAuth(`${API_BASE_URL}/profile/settings`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(updates),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update settings');
-  }
-  return response.json();
-};

@@ -1,34 +1,50 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Dashboard } from './pages/Dashboard';
+import { Profile } from './components/Profile';
+import { Settings } from './components/Settings';
 import { Navbar } from './components/Navbar';
 import { Login } from './auth/Login';
 import { PrivateRoute } from './auth/PrivateRoute';
-import { TransferForm } from './components/TransferForm';
-import { TransferSuccess } from './components/TransferSuccess';
 
 // Layout wrapper for routes that need the navbar
 const MainLayout = ({ children }) => (
-            </PrivateRoute>
-          } 
-        />
+  <div className="min-h-screen bg-gray-50">
+    <Navbar />
+    {children}
+  </div>
+);
+
+export const AppRouter = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route 
-          path="/transfer" 
+          path="/profile" 
           element={
             <PrivateRoute>
               <MainLayout>
-                <div className="py-8 px-4 sm:px-6 lg:px-8"><TransferForm /></div>
+                <Profile />
               </MainLayout>
             </PrivateRoute>
           } 
         />
         <Route 
-          path="/transfer/success" 
+          path="/settings" 
           element={
             <PrivateRoute>
               <MainLayout>
-                <div className="py-8 px-4 sm:px-6 lg:px-8"><TransferSuccess /></div>
+                <Settings />
               </MainLayout>
             </PrivateRoute>
           } 
+        />
         />
         {/* Placeholder for the transaction details page to avoid breaking tests/existing routing */}
         <Route path="/transactions/:id" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       </Routes>
+    </BrowserRouter>
+  );
+};

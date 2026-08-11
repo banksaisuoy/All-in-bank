@@ -1,12 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from '../App';
+import React from 'react';
 
-// Mock Recharts per instructions
+// The app will redirect to login if not authenticated.
 describe('App Routing', () => {
-  it('renders App with routing', async () => {
+  it('renders App with routing (redirects to login)', async () => {
      render(<App />);
-     // The dashboard displays a loading state first due to useProfile. We should wait for Overview or find Loading dashboard.
-     expect(await screen.findByText('Overview')).toBeInTheDocument();
+     
+     // Due to PrivateRoute and no token in localStorage, it will render the Login component.
+     await waitFor(() => {
+       expect(screen.getByText('Sign in to your account')).toBeInTheDocument();
+     });
   });
 });

@@ -1,29 +1,77 @@
-import { describe, it, expect, vi } from 'vitest';
-import { fetchUserProfile, fetchUserSettings, updateUserSettings, getUserProfile, updateProfile, updateSettings } from './ProfileAPI';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getUserProfile, fetchUserSettings, updateProfile, updateSettings } from './ProfileAPI';
+
+// Mock the auth api module
+vi.mock('../auth/api', () => ({
+  fetchWithAuth: vi.fn(),
+}));
+import { fetchWithAuth } from '../auth/api';
 
 describe('ProfileAPI', () => {
-  it('fetchUserProfile returns mock user profile', async () => {
-    const updatedSettings = await updateUserSettings(newSettings);
-    expect(updatedSettings).toEqual(newSettings);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('import.meta', { env: { VITE_API_BASE_URL: 'http://localhost' } });
   });
 
-  it('getUserProfile aliases fetchUserProfile', async () => {
+  it('getUserProfile fetches and returns user profile', async () => {
+    const mockProfile = { name: 'Jane Doe', avatar: 'https://i.pravatar.cc/150' };
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockProfile,
+    });
+    
     const profile = await getUserProfile();
-    expect(profile).toHaveProperty('name', 'Jane Doe');
-    expect(profile).toHaveProperty('avatar');
+    expect(fetchWithAuth).toHaveBeenCalledWith('/api/profile');
+    expect(profile).toEqual(mockProfile);
+  });
+
+  it('fetchUserSettings fetches and returns user settings', async () => {
+    const mockSettings = { notifications: true, darkMode: false, privacy: true };
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockSettings,
+    });
+    
+    const settings = await fetchUserSettings();
+    expect(fetchWithAuth).toHaveBeenCalledWith('/api/profile/settings');
+    expect(settings).toEqual(mockSettings);
   });
 
   it('updateProfile updates and returns new profile', async () => {
-    const newProfileData = { name: 'Jane Smith', avatar: 'https://newavatar.com' };
-    const updatedProfile = await updateProfile(newProfileData);
-    expect(updatedProfile).toHaveProperty('name', 'Jane Smith');
-    expect(updatedProfile).toHaveProperty('avatar', 'https://newavatar.com');
+    const updates = { name: 'Jane Smith' };
+    const mockUpdatedProfile = { name: 'Jane Smith', avatar: 'https://i.pravatar.cc/150' };
+    
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockUpdatedProfile,
+    });
+    
+    const updatedProfile = await updateProfile(updates);
+    
+    expect(fetchWithAuth).toHaveBeenCalledWith('/api/profile', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    expect(updatedProfile).toEqual(mockUpdatedProfile);
   });
 
-  it('updateSettings aliases updateUserSettings', async () => {
-    const initialSettings = await fetchUserSettings();
-    const newSettingsData = { ...initialSettings, darkMode: true, privacy: false };
-    const updatedSettings = await updateSettings(newSettingsData);
-    expect(updatedSettings).toEqual(newSettingsData);
+  it('updateSettings updates and returns new settings', async () => {
+    const updates = { darkMode: true };
+    const mockUpdatedSettings = { notifications: true, darkMode: true, privacy: true };
+    
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockUpdatedSettings,
+    });
+    
+    const updatedSettings = await updateSettings(updates);
+    
+    expect(fetchWithAuth).toHaveBeenCalledWith('/api/profile/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    expect(updatedSettings).toEqual(mockUpdatedSettings);
   });
 });

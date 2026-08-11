@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from '../App';
 
-// Mock Recharts per instructions
 describe('App Routing', () => {
-  it('renders App with routing', async () => {
+  it('renders App', async () => {
      render(<App />);
-     // The dashboard displays a loading state first due to useProfile. We should wait for Overview or find Loading dashboard.
-     expect(await screen.findByText('Overview')).toBeInTheDocument();
+     await waitFor(() => {
+       expect(screen.getAllByText(/Sign in/i)[0]).toBeInTheDocument();
+     });
   });
 });

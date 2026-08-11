@@ -1,67 +1,24 @@
 name: Auto Merge Jules PRs
 
 on:
-  workflow_run:
-    workflows: ["v10 PR Quality Review"]
-    types: [completed]
-    branches:
-      - "jules-*"
+  pull_request:
+    types: [opened, reopened, synchronized]
 
 permissions:
   contents: write
   pull-requests: write
-  actions: read
 
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: |
+      github.event.pull_request.user.login == 'google-labs-jules[bot]' ||
+      startsWith(github.event.pull_request.head.ref, 'jules-') ||
+      contains(github.event.pull_request.body, 'PR created automatically by Jules')
     steps:
-      - name: Get PR info from workflow run
-        id: pr
+      - name: Auto Merge PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the PR number from the workflow run
-          PR_NUMBER=$(gh run view ${{ github.event.workflow_run.id }} --json headBranch --jq '.headBranch' | grep -oP 'jules-auto-\K\d+' || echo "")
-          if [ -z "$PR_NUMBER" ]; then
-            # Try to find PR by branch name
-            BRANCH=$(gh run view ${{ github.event.workflow_run.id }} --json headBranch --jq '.headBranch')
-            PR_NUMBER=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
-          fi
-          echo "PR Number: $PR_NUMBER"
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      - name: Check PR is not empty
-        if: steps.pr.outputs.pr_number != ''
-        id: check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=${{ steps.pr.outputs.pr_number }}
-          PR_URL="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
-          
-          FILES_COUNT=$(gh pr view "$PR_NUMBER" --json files --jq '.files | length')
-          ADDITIONS=$(gh pr view "$PR_NUMBER" --json additions --jq '.additions')
-          DELETIONS=$(gh pr view "$PR_NUMBER" --json deletions --jq '.deletions')
-          
-          echo "PR #$PR_NUMBER: Files=$FILES_COUNT, +$ADDITIONIONS -$DELETIONS"
-          
-          if [ "$FILES_COUNT" = "0" ] && [ "$ADDITIONS" = "0" ] && [ "$DELETIONS" = "0" ]; then
-            echo "Empty PR — closing"
-            gh pr close "$PR_NUMBER" --comment "Auto-closed: empty PR"
-            echo "skip=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          echo "skip=false" >> $GITHUB_OUTPUT
-
-      - name: Merge PR
-        if: steps.pr.outputs.pr_number != '' && steps.check.outputs.skip != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=${{ steps.pr.outputs.pr_number }}
-          echo "Merging PR #$PR_NUMBER..."
-          gh pr merge "$PR_NUMBER" --merge --delete-branch || \
-          gh pr merge "$PR_NUMBER" --merge --admin --delete-branch || \
-          echo "Merge failed — PR remains open"
+          gh pr merge ${{ github.event.pull_request.html_url }} --merge --delete-branch || \
+          gh pr merge ${{ github.event.pull_request.html_url }} --merge --admin --delete-branch

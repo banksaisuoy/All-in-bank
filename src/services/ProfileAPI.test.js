@@ -1,29 +1,41 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fetchUserProfile, fetchUserSettings, updateUserSettings, getUserProfile, updateProfile, updateSettings } from './ProfileAPI';
+import { getUserProfile, updateProfile, updateSettings } from './ProfileAPI';
+import { fetchWithAuth } from '../auth/api';
+
+vi.mock('../auth/api', () => ({
+  fetchWithAuth: vi.fn(),
+}));
 
 describe('ProfileAPI', () => {
-  it('fetchUserProfile returns mock user profile', async () => {
-    const updatedSettings = await updateUserSettings(newSettings);
-    expect(updatedSettings).toEqual(newSettings);
-  });
-
-  it('getUserProfile aliases fetchUserProfile', async () => {
+  it('getUserProfile fetches profile correctly', async () => {
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ name: 'Jane Doe', avatar: 'test.jpg' }),
+    });
+    
     const profile = await getUserProfile();
     expect(profile).toHaveProperty('name', 'Jane Doe');
     expect(profile).toHaveProperty('avatar');
-  });
 
   it('updateProfile updates and returns new profile', async () => {
     const newProfileData = { name: 'Jane Smith', avatar: 'https://newavatar.com' };
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => newProfileData,
+    });
+    
     const updatedProfile = await updateProfile(newProfileData);
     expect(updatedProfile).toHaveProperty('name', 'Jane Smith');
     expect(updatedProfile).toHaveProperty('avatar', 'https://newavatar.com');
   });
 
-  it('updateSettings aliases updateUserSettings', async () => {
-    const initialSettings = await fetchUserSettings();
-    const newSettingsData = { ...initialSettings, darkMode: true, privacy: false };
+  it('updateSettings updates and returns new settings', async () => {
+    const newSettingsData = { darkMode: true, privacy: false };
+    fetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => newSettingsData,
+    });
+    
     const updatedSettings = await updateSettings(newSettingsData);
     expect(updatedSettings).toEqual(newSettingsData);
   });
-});

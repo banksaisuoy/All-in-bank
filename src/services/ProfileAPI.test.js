@@ -8,5 +8,4 @@
     
     const updatedSettings = await updateSettings(newSettingsData);
     expect(updatedSettings).toEqual(newSettingsData);
-  });
-});
+  });});

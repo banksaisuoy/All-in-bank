@@ -1,52 +1,33 @@
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Dashboard } from './components/Dashboard';
+import { Profile } from './components/Profile';
 import { Settings } from './components/Settings';
 import { Login } from './auth/Login';
 import { PrivateRoute } from './auth/PrivateRoute';
-import { Navbar } from './components/Navbar';
 
 function Home() {
   return (
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold mb-4">Welcome to All-in-bank</h1>
+      <Link to="/dashboard" className="text-blue-500 hover:underline">Go to Dashboard</Link>
+    </div>
+  );
+}
+
 // Layout wrapper for routes that need the navbar
 const MainLayout = ({ children }) => (
   <div className="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar />
-    <main className="flex-1">
-      {children}
-    </main>
-  </div>
-);
-
-export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </PrivateRoute>
-          } 
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route 
-          path="/profile" 
+          path="/dashboard" 
           element={
             <PrivateRoute>
               <MainLayout>
-                <Profile />
-              </MainLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/settings" 
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Settings />
-              </MainLayout>
-            </PrivateRoute>
-          } 
-        />
       </Routes>
     </BrowserRouter>
   );
+};

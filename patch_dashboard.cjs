@@ -1,16 +1,28 @@
 const fs = require('fs');
+let dashboardTest = `import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { Dashboard } from './Dashboard';
+import { BrowserRouter } from 'react-router-dom';
 
-let dashboard = fs.readFileSync('src/components/Dashboard.jsx', 'utf8');
+vi.mock('../hooks/useSpendingData', () => ({
+  useSpendingData: () => ({
+    metrics: { balance: 1000, income: 500, expenses: 200 },
+    data: { trendData: [], categoryData: [] },
+    spendingByCategory: [],
+    recentTransactions: []
+  })
+}));
 
-dashboard = dashboard.replace(
-  "import { cn } from '../lib/utils';",
-  "import { cn } from '../lib/utils';\nimport { RecentTransactions } from './RecentTransactions';"
-);
-
-dashboard = dashboard.replace(
-  "        </div>\n\n      </div>",
-  "        </div>\n\n        {/* Recent Transactions */}\n        <RecentTransactions />\n\n      </div>"
-);
-
-fs.writeFileSync('src/components/Dashboard.jsx', dashboard);
-console.log('Dashboard updated');
+describe('Dashboard', () => {
+  it('renders successfully', () => {
+    render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    );
+    expect(screen.getByText('Overview of your personal spending')).toBeInTheDocument();
+  });
+});
+`;
+fs.writeFileSync('src/components/Dashboard.test.jsx', dashboardTest);

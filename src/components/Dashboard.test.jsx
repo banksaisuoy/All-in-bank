@@ -1,15 +1,25 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import App from '../App';
 import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { Dashboard } from './Dashboard';
+import { BrowserRouter } from 'react-router-dom';
 
-// The app will render the Home component initially
-describe('App Routing', () => {
-  it('renders App with routing (renders home page)', async () => {
-     render(<App />);
-     
-     await waitFor(() => {
-       expect(screen.getByText('Welcome to All-in-bank')).toBeInTheDocument();
-     });
+vi.mock('../hooks/useSpendingData', () => ({
+  useSpendingData: () => ({
+    metrics: { balance: 1000, income: 500, expenses: 200 },
+    data: { trendData: [], categoryData: [] },
+    spendingByCategory: [],
+    recentTransactions: []
+  })
+}));
+
+describe('Dashboard', () => {
+  it('renders successfully', () => {
+    render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    );
+    expect(screen.getByText('Overview of your personal spending')).toBeInTheDocument();
   });
 });

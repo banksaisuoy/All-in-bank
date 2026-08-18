@@ -1,37 +1,57 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
 import { Profile } from './components/Profile';
 import { Settings } from './components/Settings';
+import { Navbar } from './components/Navbar';
+import { Login } from './auth/Login';
+import { PrivateRoute } from './auth/PrivateRoute';
+
+// Layout wrapper for routes that need the navbar
+const MainLayout = ({ children }) => (
+  <div className="min-h-screen bg-gray-50 flex flex-col">
+    <Navbar />
+    <main className="flex-1">
+      {children}
+    </main>
   </div>
 );
 
-// Home component for the root path
-const Home = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to All-in-bank</h1>
-      <p className="text-gray-500 mb-8">Manage your finances in one place</p>
-      <a href="/login" className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-        Go to Login
-      </a>
-    </div>
-  );
-};
-
-export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route 
-          path="/" 
-          element={<Home />} 
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route 
           path="/dashboard" 
           element={
             <PrivateRoute>
               <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <Settings />
+              </MainLayout>
+            </PrivateRoute>
+          } 
+        />
+        {/* Placeholder for the transaction details page to avoid breaking tests/existing routing */}
+        <Route path="/transactions/:id" element={<PrivateRoute><MainLayout><Dashboard /></MainLayout></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );
-};

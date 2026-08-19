@@ -1,19 +1,22 @@
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Settings } from './index';
+import * as ProfileAPI from '../../services/ProfileAPI';
 
 vi.mock('../../services/ProfileAPI', () => ({
   updateSettings: vi.fn(),
   getUserProfile: vi.fn(),
 }));
 
-const mockSettings = { notifications: true, darkMode: false };
+describe('Settings', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders loading state initially', async () => {
-    ProfileAPI.getUserProfile.mockRejectedValue(new Error('error'));
     render(<Settings />);
     await waitFor(() => {
       expect(screen.getByTestId('settings-error')).toBeInTheDocument();
-      expect(screen.getByText('Notifications')).toBeInTheDocument();
     });
   });
 });

@@ -1,5 +1,5 @@
 - Completed all current tasks.
 
-## 📋 Next Steps (AI จะเลือกทำจากนี่)
+## 📋 Next Steps
 1. Add the next feature.
-- Added RecentTransactions to Dashboard.jsx
+- Restored missing files from syntax bug.

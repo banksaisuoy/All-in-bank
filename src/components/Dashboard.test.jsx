@@ -1,25 +1,26 @@
-}));
-
-
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { Dashboard } from './Dashboard';
+import { BrowserRouter } from 'react-router-dom';
 
 vi.mock('../hooks/useSpendingData', () => ({
-  useSpendingData: (filter) => {
-    const data = {
-      trendData: [{ date: 'Oct 1', value: 100 }],
-      categoryData: [
-        { name: 'food', value: 50, color: 'bg-orange-500' },
-        { name: 'transport', value: 30, color: 'bg-blue-500' }
-      ]
-    };
-    const metrics = {
-      balance: 1000,
-      income: 1500,
-      expenses: -500
-    };
-    return { data, metrics, spendingByCategory: data.categoryData, recentTransactions: [], isLoading: false };
-  }
+  useSpendingData: () => ({
+    metrics: { balance: 1000, income: 500, expenses: 200 },
+    data: { trendData: [], categoryData: [] },
+    spendingByCategory: [],
+    recentTransactions: [],
+    isLoading: false
+  })
 }));
 
 describe('Dashboard Component', () => {
   it('renders correctly', () => {
-    render(<Dashboard />);
+    render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    );
+    expect(screen.getByText(/Overview of your personal spending/i)).toBeInTheDocument();
+  });
+});

@@ -5,45 +5,46 @@
 
   useEffect(() => {
     const fetchProfile = async () => {
+  const handleEditToggle = () => {
     if (isEditing) {
       setEditForm({ name: profile.name, avatar: profile.avatar || '' });
+      setFormError(null);
     }
-    setFormError(null);
     setIsEditing(!isEditing);
   };
 
   const handleSave = async () => {
-  setFormError(null);
-  if (!editForm.name || !editForm.name.trim()) {
-    setFormError('Name is required');
-    return;
-  }
-  if (/[<>]/.test(editForm.name) || (editForm.avatar && /[<>]/.test(editForm.avatar))) {
-    setFormError('Input contains invalid characters');
-    return;
-  }
-  try {
+    setFormError(null);
+    if (!editForm.name || !editForm.name.trim()) {
+      setFormError('Name is required');
+      return;
+    }
+    if (/[<>]/.test(editForm.name)) {
+      setFormError('Name contains invalid characters');
+      return;
+    }
+    if (editForm.avatar && editForm.avatar.trim().toLowerCase().startsWith('javascript:')) {
+      setFormError('Invalid avatar URL');
+      return;
+    }
+    try {
       setIsSaving(true);
       const updated = await updateProfile(editForm);
       setProfile(updated);
-          </button>
-        </div>
+      setIsEditing(false);
+    } catch {
+      setFormError('Failed to update profile.');
+    } finally {
+      setIsSaving(false);
+    }
+          </div>
 
-        <div className="flex flex-col gap-4">
-          {formError && (
-            <div className="w-full text-red-500 bg-red-50 p-3 rounded-md" data-testid="form-error">
-              {formError}
-            </div>
-          )}
-          <div className="flex flex-col sm:flex-row gap-8 items-start">
-            <div className="relative group shrink-0 mx-auto sm:mx-0">
-            <div className="h-32 w-32 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
-              {isEditing && editForm.avatar ? (
-                <img src={editForm.avatar} alt="Avatar Preview" className="h-full w-full object-cover" />
+          <div className="flex-1 w-full space-y-6">
+            {formError && (
+              <div className="text-sm text-red-600 bg-red-50 p-2 rounded-md" data-testid="form-error">
+                {formError}
               </div>
             )}
-          </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              {isEditing ? (

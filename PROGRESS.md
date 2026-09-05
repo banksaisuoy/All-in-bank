@@ -2,3 +2,4 @@
 - Added test script to package.json
 - Added input validation in Profile component to prevent empty names and invalid avatar URLs (potential XSS via javascript: URIs).
 - Added XSS validation to email input in Login.jsx
+- Reviewed forms; no input validation vulnerabilities found.

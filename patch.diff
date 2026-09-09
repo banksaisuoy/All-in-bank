@@ -1,14 +1,10 @@
 diff --git a/src/auth/Login.jsx b/src/auth/Login.jsx
-index 296fd16..d80b364 100644
+index 7c4c141..fd16a1b 100644
 --- a/src/auth/Login.jsx
-@@ -18,6 +18,11 @@ export const Login = () => {
+@@ -6,6 +6,11 @@
        return;
      }
  
-+    if (email && /[<>]/.test(email)) {
-+      setError('Email contains invalid characters');
-+      return;
-+    }
 +
      try {
        await login(email, password);

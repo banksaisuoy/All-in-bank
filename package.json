@@ -1,8 +1,13 @@
+{
+  "name": "all-in-bank",
+  "version": "1.0.0",
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview",
     "test": "jest"
   },
   "dependencies": {
-    "autoprefixer": "^10.5.2",
+    "autoprefixer": "^10.5.2"
+  }
+}

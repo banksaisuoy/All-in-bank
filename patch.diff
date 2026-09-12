@@ -1,11 +1,15 @@
-diff --git a/src/auth/Login.jsx b/src/auth/Login.jsx
-index 7c4c141..fd16a1b 100644
---- a/src/auth/Login.jsx
-@@ -6,6 +6,11 @@
+diff --git a/src/components/TransferForm.jsx b/src/components/TransferForm.jsx
+index fee6eb1..53ddbd6 100644
+--- a/src/components/TransferForm.jsx
+@@ -56,6 +56,11 @@ export const TransferForm = () => {
        return;
      }
  
++    if (formData.description && /[<>]/.test(formData.description)) {
++      setError('Description contains invalid characters');
++      return;
++    }
 +
-     try {
-       await login(email, password);
-       navigate('/', { replace: true });
+     if (!formData.pin || formData.pin.length < 4) {
+       setError('Please enter a valid PIN');
+       return;

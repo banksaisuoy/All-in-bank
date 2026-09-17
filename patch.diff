@@ -1,15 +1,31 @@
-diff --git a/src/components/TransferForm.jsx b/src/components/TransferForm.jsx
-index fee6eb1..53ddbd6 100644
---- a/src/components/TransferForm.jsx
-@@ -56,6 +56,11 @@ export const TransferForm = () => {
-       return;
-     }
- 
-+    if (formData.description && /[<>]/.test(formData.description)) {
-+      setError('Description contains invalid characters');
-+      return;
-+    }
-+
-     if (!formData.pin || formData.pin.length < 4) {
-       setError('Please enter a valid PIN');
-       return;
+diff --git a/PROGRESS.md b/PROGRESS.md
+index 4778bee..f706b1c 100644
+--- a/PROGRESS.md
+@@ -1,4 +1,4 @@
+ - Reviewed input validation. Codebase already contains necessary protections, empty patch generated.
+ - Reviewed forms and endpoints for input validation issues. They already have sufficient validation. An empty patch file has been produced per instructions.
+ - Added input validation to `TransferForm.jsx` to prevent overly large amounts (`> 1000000000`) on transfer.
+-Added input validation to TransferForm description field to prevent XSS.- Fixed XSS vulnerability in TransferSuccess.jsx by removing invalid characters from description display.
+\ No newline at end of file
++Added input validation to TransferForm description field to prevent XSS.- Fixed XSS vulnerability in TransferSuccess.jsx by removing invalid characters from description display.Added build and preview scripts to package.json
+diff --git a/package.json b/package.json
+index 11165f0..373fdf0 100644
+--- a/package.json
+@@ -3,7 +3,9 @@
+   "version": "1.0.0",
+   "type": "module",
+   "scripts": {
+-    "test": "vitest run"
++    "test": "vitest run",
++    "build": "vite build --outDir public",
++    "preview": "vite preview"
+   },
+   "dependencies": {
+     "@testing-library/dom": "^10.4.2",
+@@ -25,4 +27,4 @@
+     "vite": "^8.3.0",
+     "vitest": "^5.0.0"
+   }
+-}
+\ No newline at end of file
++}
